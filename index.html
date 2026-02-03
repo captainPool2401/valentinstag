@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>💘 Valentinstag 💘</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #gate {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 154, 158, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 24px;
+    }
+
+    .gate-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 24px 28px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      color: #ff4d6d;
+    }
+
+    .gate-card h2 {
+      margin: 0 0 12px 0;
+    }
+
+    .gate-card p {
+      margin: 8px 0 16px 0;
+    }
+
+    .gate-input {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .gate-input input {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #ffd1dc;
+      font-size: 16px;
+      min-width: 200px;
+    }
+
+    .gate-error {
+      margin-top: 12px;
+      color: #ff4d6d;
+      display: none;
+      font-size: 14px;
+    }
+
+    h1 {
+      color: #fff;
+      margin-bottom: 40px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    #yes {
+      background-color: #ff4d6d;
+      color: white;
+      margin-right: 20px;
+    }
+
+    #no {
+      background-color: #ffffff;
+      color: #ff4d6d;
+      position: fixed;
+      z-index: 10;
+    }
+
+    .no-bubble {
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      color: #ff4d6d;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .no-bubble::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 6px 6px 0 6px;
+      border-style: solid;
+      border-color: #ffffff transparent transparent transparent;
+    }
+
+    .no-bubble.visible {
+      opacity: 1;
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 24px;
+      color: white;
+      display: none;
+    }
+
+    #collage {
+      display: none;
+      margin-top: 30px;
+      width: min(96vw, 980px);
+      height: min(85vh, 980px);
+      place-items: center;
+    }
+
+    #collage.active {
+      display: grid;
+    }
+
+    .heart-frame {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.25);
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      border-radius: 18px;
+    }
+
+    .heart {
+      width: min(85vw, 820px);
+      height: min(85vw, 820px);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.25);
+      -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0%200%2032%2029.6'><path fill='white' d='M23.6,0c-3.4,0-6.4,2-7.6,4.9C14.8,2,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.5,16,21.2,16,21.2s16-11.7,16-21.2C32,3.8,28.2,0,23.6,0z'/></svg>");
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: contain;
+      mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0%200%2032%2029.6'><path fill='white' d='M23.6,0c-3.4,0-6.4,2-7.6,4.9C14.8,2,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.5,16,21.2,16,21.2s16-11.7,16-21.2C32,3.8,28.2,0,23.6,0z'/></svg>");
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: contain;
+    }
+
+    .heart img {
+      width: 110%;
+      height: 110%;
+      object-fit: cover;
+      display: block;
+      position: absolute;
+      top: -5%;
+      left: -5%;
+      filter: saturate(1.1) contrast(1.05);
+    }
+
+    .heart-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      font-size: clamp(18px, 4vw, 40px);
+      font-weight: 700;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+      letter-spacing: 1px;
+      opacity: 0;
+      animation: fadeInOut 6s ease-in-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      15% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    #hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.9;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding: 0 16px;
+      }
+
+      button {
+        padding: 12px 18px;
+        font-size: 16px;
+      }
+
+      #message {
+        font-size: 20px;
+        padding: 0 16px;
+      }
+
+      #collage {
+        width: 96vw;
+        height: min(80vh, 520px);
+        margin-top: 20px;
+      }
+
+      .heart {
+        width: min(90vw, 420px);
+        height: min(90vw, 420px);
+      }
+
+      .gate-card {
+        padding: 20px;
+      }
+    }
+
+    @media (max-height: 600px) {
+      #collage {
+        height: min(80vh, 520px);
+      }
+
+      .heart {
+        width: min(90vw, 520px);
+        height: min(90vw, 520px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="gate">
+    <div class="gate-card">
+      <h2>Kleines Rätsel 💌</h2>
+      <p>
+        Ich bin kein Ding und doch so schwer,<br>
+        ich wärme Herzen, manchmal mehr.<br>
+        Sag mein Wort, dann geht es auf.
+      </p>
+      <div class="gate-input">
+        <input id="gateInput" type="text" placeholder="Passwort eingeben" autocomplete="off">
+        <button id="gateBtn">Öffnen</button>
+      </div>
+      <div id="gateError" class="gate-error">Falsch 💔 Tipp: Das Wort ist ganz einfach.</div>
+    </div>
+  </div>
+  <canvas id="hearts"></canvas>
+
+  <h1>Willst du mein Valentinstagsschatz sein? 💖</h1>
+
+  <div style="position: relative; height: 100px; width: 300px;">
+    <button id="yes">Ja 💘</button>
+    <button id="no">
+      Nein 🙈
+      <span class="no-bubble">Nein ist ausverkauft 😅</span>
+    </button>
+  </div>
+
+  <div id="message">JAAA! 🥰💞 Ich liebe dich!</div>
+  <div id="collage" aria-live="polite"></div>
+  <audio id="loveSong" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto" loop></audio>
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const msg = document.getElementById("message");
+    const collage = document.getElementById("collage");
+    const noBubble = noBtn.querySelector(".no-bubble");
+    const loveSong = document.getElementById("loveSong");
+    const gate = document.getElementById("gate");
+    const gateInput = document.getElementById("gateInput");
+    const gateBtn = document.getElementById("gateBtn");
+    const gateError = document.getElementById("gateError");
+    const heartsCanvas = document.getElementById("hearts");
+
+    const imagePaths = [
+      "https://picsum.photos/seed/love-1/900/900",
+      "https://picsum.photos/seed/love-2/900/900",
+      "https://picsum.photos/seed/love-3/900/900",
+      "https://picsum.photos/seed/love-4/900/900",
+      "https://picsum.photos/seed/love-5/900/900",
+      "https://picsum.photos/seed/love-6/900/900",
+      "https://picsum.photos/seed/love-7/900/900",
+      "https://picsum.photos/seed/love-8/900/900",
+      "https://picsum.photos/seed/love-9/900/900"
+    ];
+
+    let collageIndex = 0;
+    let collageTimer = null;
+    let bubbleShown = false;
+    let heartsTimer = null;
+    let heartsCtx = null;
+    let hearts = [];
+  
+    // Initiale Position (sichtbarer Bildschirm)
+    noBtn.style.left = "120px";
+    noBtn.style.top = "120px";
+  
+    function moveButton() {
+      const padding = 20;
+  
+      const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+      const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+  
+      const x = Math.max(padding, Math.random() * maxX);
+      const y = Math.max(padding, Math.random() * maxY);
+  
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+
+      if (!bubbleShown && noBubble) {
+        noBubble.classList.add("visible");
+        bubbleShown = true;
+      }
+    }
+  
+    noBtn.addEventListener("mouseenter", moveButton);
+    noBtn.addEventListener("mouseover", moveButton);
+    noBtn.addEventListener("click", moveButton); // extra fies 😈
+
+    gateBtn.addEventListener("click", unlockGate);
+    gateInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        unlockGate();
+      }
+    });
+  
+    yesBtn.addEventListener("click", () => {
+      msg.style.display = "block";
+      collage.classList.add("active");
+      startSlideshow();
+      playSong();
+      startHearts();
+    });
+
+    function renderSlideshow() {
+      collage.innerHTML = "";
+      const frame = document.createElement("div");
+      frame.className = "heart-frame";
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      const img = document.createElement("img");
+      img.src = imagePaths[collageIndex % imagePaths.length];
+      img.alt = "Unsere Erinnerung";
+      const overlay = document.createElement("div");
+      overlay.className = "heart-overlay";
+      overlay.textContent = "Ich liebe dich";
+      heart.appendChild(img);
+      heart.appendChild(overlay);
+      frame.appendChild(heart);
+      collage.appendChild(frame);
+      collageIndex = (collageIndex + 1) % imagePaths.length;
+    }
+
+    function startSlideshow() {
+      if (collageTimer) {
+        return;
+      }
+      renderSlideshow();
+      collageTimer = setInterval(renderSlideshow, 2500);
+    }
+
+    function playSong() {
+      if (!loveSong) {
+        return;
+      }
+      loveSong.play().catch(() => {
+        // Autoplay kann blockiert sein; Nutzer kann manuell starten
+      });
+    }
+
+    function normalizeAnswer(value) {
+      return value.trim().toLowerCase();
+    }
+
+    function unlockGate() {
+      const answer = normalizeAnswer(gateInput.value);
+      if (answer === "liebe") {
+        gate.style.display = "none";
+      } else {
+        gateError.style.display = "block";
+      }
+    }
+
+    function resizeHearts() {
+      heartsCanvas.width = window.innerWidth;
+      heartsCanvas.height = window.innerHeight;
+    }
+
+    function spawnHeart() {
+      const size = 10 + Math.random() * 18;
+      hearts.push({
+        x: Math.random() * heartsCanvas.width,
+        y: heartsCanvas.height + size,
+        size,
+        speed: 0.6 + Math.random() * 1.4,
+        drift: (Math.random() - 0.5) * 0.6,
+        alpha: 0.6 + Math.random() * 0.4
+      });
+    }
+
+    function drawHeart(x, y, size, alpha) {
+      heartsCtx.save();
+      heartsCtx.globalAlpha = alpha;
+      heartsCtx.fillStyle = "#ff4d6d";
+      heartsCtx.beginPath();
+      heartsCtx.moveTo(x, y);
+      heartsCtx.bezierCurveTo(x - size, y - size, x - size * 1.6, y + size * 0.4, x, y + size * 1.6);
+      heartsCtx.bezierCurveTo(x + size * 1.6, y + size * 0.4, x + size, y - size, x, y);
+      heartsCtx.fill();
+      heartsCtx.restore();
+    }
+
+    function animateHearts() {
+      heartsCtx.clearRect(0, 0, heartsCanvas.width, heartsCanvas.height);
+      hearts = hearts.filter((heart) => heart.y + heart.size > -20);
+      hearts.forEach((heart) => {
+        heart.y -= heart.speed;
+        heart.x += heart.drift;
+        drawHeart(heart.x, heart.y, heart.size, heart.alpha);
+      });
+      heartsTimer = requestAnimationFrame(animateHearts);
+    }
+
+    function startHearts() {
+      if (heartsCtx) {
+        return;
+      }
+      heartsCanvas.style.display = "block";
+      heartsCtx = heartsCanvas.getContext("2d");
+      resizeHearts();
+      for (let i = 0; i < 25; i += 1) {
+        spawnHeart();
+      }
+      setInterval(spawnHeart, 400);
+      animateHearts();
+    }
+
+    window.addEventListener("resize", resizeHearts);
+  </script>
+  
+
+</body>
+</html>
