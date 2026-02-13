@@ -289,14 +289,12 @@
 
   <div id="message">JAAA! 🥰💞 Ich liebe dich!</div>
   <div id="collage" aria-live="polite"></div>
-  <audio id="loveSong" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto" loop></audio>
   <script>
     const noBtn = document.getElementById("no");
     const yesBtn = document.getElementById("yes");
     const msg = document.getElementById("message");
     const collage = document.getElementById("collage");
     const noBubble = noBtn.querySelector(".no-bubble");
-    const loveSong = document.getElementById("loveSong");
     const gate = document.getElementById("gate");
     const gateInput = document.getElementById("gateInput");
     const gateBtn = document.getElementById("gateBtn");
@@ -355,7 +353,6 @@
       msg.style.display = "block";
       collage.classList.add("active");
       startSlideshow();
-      playSong();
       startHearts();
     });
 
@@ -386,14 +383,6 @@
       collageTimer = setInterval(renderSlideshow, 2500);
     }
 
-    function playSong() {
-      if (!loveSong) {
-        return;
-      }
-      loveSong.play().catch(() => {
-        // Autoplay kann blockiert sein; Nutzer kann manuell starten
-      });
-    }
 
     function normalizeAnswer(value) {
       return value.trim().toLowerCase();
